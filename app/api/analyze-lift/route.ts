@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const res = await fetch("https://kinara-67fpgcnrh.brevlab.com/full-analysis", {
+    const res = await fetch("https://kinaraa-67fpgcnrh.brevlab.com/api/full-analysis", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ videoUrl }),
