@@ -6,3 +6,4 @@ __pycache__/
 kinara/outputs/
 kinara/__pycache__/
 kinara/**/.ipynb_checkpoints/
+.vscode/
