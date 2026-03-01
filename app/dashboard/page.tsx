@@ -1,16 +1,10 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { Navbar } from "@/components/Navbar";
 import { TrendInsight, computeTrends, TrendSession } from "@/components/TrendInsight";
 import { Dumbbell, ChevronRight, Video, TrendingUp, Clock } from "lucide-react";
 import pool from "@/lib/db";
-
-const liftHubs = [
-  { name: "Squat", href: "/lifts/squat", desc: "Depth, bar path, knee tracking." },
-  { name: "Bench Press", href: "/lifts/bench-press", desc: "Arch, bar path, elbow tuck." },
-  { name: "Deadlift", href: "/lifts/deadlift", desc: "Hinge, lockout, bar speed." },
-];
 
 function scoreColor(score: number) {
   if (score >= 80) return "#3b82f6";
@@ -43,7 +37,6 @@ export default async function DashboardPage() {
 
   const user = await currentUser();
 
-  // Fetch up to 50 sessions for accurate trend analysis
   const [rows] = await pool.execute(
     `SELECT id, lift_type, video_url, score, pros, corrections, created_at
      FROM lift_sessions WHERE user_id = ?
@@ -63,10 +56,8 @@ export default async function DashboardPage() {
 
   const liftCount = new Set(sessions.map((s) => s.lift_type)).size;
 
-  // Compute trends for all lift types
   const trends = computeTrends(sessions as TrendSession[]);
 
-  // Recent 10 for the history list
   const recentSessions = sessions.slice(0, 10);
 
   return (
@@ -102,27 +93,22 @@ export default async function DashboardPage() {
           })}
         </div>
 
-        {/* Trend analysis — only shown when there is data */}
+        {/* Trend analysis */}
         {trends.length > 0 && <TrendInsight trends={trends} />}
 
-        {/* Lift hubs */}
-        <h2 className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "var(--muted)" }}>Choose Your Lift</h2>
-        <div className="flex flex-col gap-4 mb-12">
-          {liftHubs.map((lift) => (
-            <Link
-              key={lift.href}
-              href={lift.href}
-              className="flex items-center gap-5 p-5 rounded-2xl border hover:border-[#3b82f6] group transition-all duration-200 active:scale-[0.99]"
-              style={{ background: "var(--surface)", borderColor: "var(--border)" }}
-            >
-              <div className="flex-1 min-w-0">
-                <div className="font-black text-lg uppercase tracking-tight group-hover:text-[#3b82f6] transition-colors" style={{ color: "var(--foreground)" }}>{lift.name}</div>
-                <div className="text-sm mt-0.5" style={{ color: "var(--muted)" }}>{lift.desc}</div>
-              </div>
-              <ChevronRight className="w-5 h-5 group-hover:text-[#3b82f6] group-hover:translate-x-1 transition-all shrink-0" style={{ color: "var(--muted)" }} />
-            </Link>
-          ))}
-        </div>
+        {/* Analyze lift CTA */}
+        <h2 className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "var(--muted)" }}>Analyze a Lift</h2>
+        <Link
+          href="/lifts"
+          className="flex items-center gap-5 p-5 rounded-2xl border hover:border-[#3b82f6] group transition-all duration-200 active:scale-[0.99] mb-12"
+          style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+        >
+          <div className="flex-1 min-w-0">
+            <div className="font-black text-lg uppercase tracking-tight group-hover:text-[#3b82f6] transition-colors" style={{ color: "var(--foreground)" }}>Upload & Analyze</div>
+            <div className="text-sm mt-0.5" style={{ color: "var(--muted)" }}>Squat, bench press, or deadlift — get instant AI form feedback.</div>
+          </div>
+          <ChevronRight className="w-5 h-5 group-hover:text-[#3b82f6] group-hover:translate-x-1 transition-all shrink-0" style={{ color: "var(--muted)" }} />
+        </Link>
 
         {/* Recent sessions */}
         <h2 className="text-xs font-black uppercase tracking-widest mb-4" style={{ color: "var(--muted)" }}>Recent Sessions</h2>

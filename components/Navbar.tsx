@@ -10,9 +10,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/lifts/squat", label: "Squat", icon: Dumbbell },
-  { href: "/lifts/bench-press", label: "Bench", icon: Dumbbell },
-  { href: "/lifts/deadlift", label: "Deadlift", icon: Dumbbell },
+  { href: "/lifts", label: "Analyze Lift", icon: Dumbbell },
 ];
 
 export function Navbar() {

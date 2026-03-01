@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { VideoUploader } from "@/components/VideoUploader";
@@ -8,9 +8,8 @@ import { Zap, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
 
-// TODO: Replace ANALYZE_ENDPOINT with your real backend URL once it is live.
-// The endpoint must accept POST with { videoUrl, liftType } and return:
-//   { reps: number, rpe: number, advice: string, score: number, pros: string[], corrections: string[] }
+// Backend endpoint that accepts POST with { videoUrl } and returns:
+//   { reps, rpe, advice, score, pros, corrections, liftType }
 const ANALYZE_ENDPOINT = "/api/analyze-lift";
 
 interface LiftPageProps {
@@ -92,7 +91,7 @@ export function LiftPage({ liftType, title, description }: LiftPageProps) {
       const res = await fetch(ANALYZE_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ videoUrl: uploadedUrl, liftType }),
+        body: JSON.stringify({ videoUrl: uploadedUrl }),
         signal: controller.signal,
       });
 
@@ -107,7 +106,7 @@ export function LiftPage({ liftType, title, description }: LiftPageProps) {
         score:       raw.score,
         pros:        raw.pros,
         corrections: raw.corrections,
-        liftType,
+        liftType:    raw.liftType || liftType,
       };
 
       setFeedback(analyzed);
@@ -127,7 +126,7 @@ export function LiftPage({ liftType, title, description }: LiftPageProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user.id,
-          liftType,
+          liftType: analyzed.liftType,
           videoUrl: uploadedUrl,
           score: analyzed.score,
           pros: analyzed.pros,
